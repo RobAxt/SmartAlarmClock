@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {"Alarms":[{"id":"0","enable":"true","hour":"6","minute":"0","dayOfWeek":"monday","fxName":"system"},
 {"id":"1","enable":"true","hour":"8","minute":"0","dayOfWeek":"monday","fxName":"rainbow"},
 {"id":"2","enable":"false","hour":"8","minute":"0","dayOfWeek":"tuesday","fxName":"none"},
@@ -18,3 +19,170 @@
 {"id":"17","enable":"false","hour":"0","minute":"0","dayOfWeek":"none","fxName":"none"},
 {"id":"18","enable":"false","hour":"0","minute":"0","dayOfWeek":"none","fxName":"none"},
 {"id":"19","enable":"false","hour":"0","minute":"0","dayOfWeek":"none","fxName":"none"}]}
+=======
+{
+    "Alarms" : [
+                    {
+                        "id" : "0",
+                        "enable" : "true",
+                        "hour" : "6",
+                        "minute" : "0",
+                        "dayOfWeek" : "monday",
+                        "fxName" : "system"
+                    },
+                    {
+                        "id" : "1",
+                        "enable" : "true",
+                        "hour" : "8",
+                        "minute" : "0",
+                        "dayOfWeek" : "monday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "2",
+                        "enable" : "true",
+                        "hour" : "8",
+                        "minute" : "0",
+                        "dayOfWeek" : "tuesday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "3",
+                        "enable" : "true",
+                        "hour" : "8",
+                        "minute" : "0",
+                        "dayOfWeek" : "wednesday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "4",
+                        "enable" : "true",
+                        "hour" : "8",
+                        "minute" : "0",
+                        "dayOfWeek" : "thursday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "5",
+                        "enable" : "true",
+                        "hour" : "8",
+                        "minute" : "0",
+                        "dayOfWeek" : "friday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "6",
+                        "enable" : "true",
+                        "hour" : "10",
+                        "minute" : "0",
+                        "dayOfWeek" : "saturday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "7",
+                        "enable" : "true",
+                        "hour" : "10",
+                        "minute" : "0",
+                        "dayOfWeek" : "sunday",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "8",
+                        "enable" : "true",
+                        "hour" : "7",
+                        "minute" : "45",
+                        "dayOfWeek" : "all",
+                        "fxName" : "sunrise"
+                    },
+                    {
+                        "id" : "9",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "10",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "11",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "12",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "13",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "14",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "15",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "16",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "17",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "18",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    },
+                    {
+                        "id" : "19",
+                        "enable" : "false",
+                        "hour" : "0",
+                        "minute" : "0",
+                        "dayOfWeek" : "none",
+                        "fxName" : "none"
+                    }
+
+               ]
+}
+>>>>>>> 78335aa6cb4cef4e0751982506b45b732e0594fc
