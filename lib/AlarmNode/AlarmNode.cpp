@@ -7,7 +7,7 @@ AlarmNode::AlarmNode(const char* id, const char* name, const char* type) : Homie
 void 
 AlarmNode::setup() {
     Homie.getLogger() << F("Calling Node Setup...") << endl;
-    setRunLoopDisconnected(false);
+    setRunLoopDisconnected(true);
     advertise("action").setName("Action")
                    .setDatatype("string")
                    .setFormat("none,add,delete")
@@ -62,7 +62,7 @@ AlarmNode::setup() {
                              });
     advertise("fx").setName("fx")
                    .setDatatype("string")
-                   .setFormat("none,sunrise")
+                   .setFormat("none,rainbow,blink,random")
                    .settable([this](const HomieRange& range, const String& value) {
                               strlcpy(currentAlarm.fxName, value.c_str(), strlen(value.c_str())+1);
                               sendProperties();

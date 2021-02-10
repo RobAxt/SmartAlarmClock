@@ -1,6 +1,6 @@
 #include "AlarmInterface.hpp"
 
-AlarmInterface::AlarmInterface() {
+AlarmInterface::AlarmInterface() :  ws2812fx(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800){
     memset(_settings, 0, sizeof(_settings));
     DateTime.setTimeZone(-3);
     DateTime.setServer("south-america.pool.ntp.org");
@@ -14,6 +14,21 @@ AlarmInterface::setupInterface(void) {
     Homie.getLogger() << "  ✔ Date: " << DateTime.format(DateFormatter::DATE_ONLY) << endl;
     Homie.getLogger() << "  ✔ Time: " << DateTime.format(DateFormatter::TIME_ONLY) << endl;
     
+    ws2812fx.init();
+    ws2812fx.setBrightness(100);
+    ws2812fx.setSpeed(1000);
+    //ws2812fx.setMode(FX_MODE_RAINBOW_CYCLE);
+    ws2812fx.start(); 
+}
+
+void 
+AlarmInterface::loopInterface(void) {
+    if (!DateTime.isTimeValid()) {
+        Serial.println("  ✖ Failed to get time from server, retry.");
+        DateTime.begin();
+        Homie.getLogger() << "  ✔ Date: " << DateTime.format(DateFormatter::DATE_ONLY) << endl;
+        Homie.getLogger() << "  ✔ Time: " << DateTime.format(DateFormatter::TIME_ONLY) << endl;
+
     if(openFileSettings("r")) {
         Homie.getLogger() << F("  ✔ Loading JSONFILE...") << endl;
         loadJSONSettings();
@@ -30,17 +45,10 @@ AlarmInterface::setupInterface(void) {
         jsonFile.close();
         SPIFFS.end();
     }
-}
 
-void 
-AlarmInterface::loopInterface(void) {
-    if (!DateTime.isTimeValid()) {
-        Serial.println("  ✖ Failed to get time from server, retry.");
-        DateTime.begin();
-        Homie.getLogger() << "  ✖ Date: " << DateTime.format(DateFormatter::DATE_ONLY) << endl;
-        Homie.getLogger() << "  ✖ Time: " << DateTime.format(DateFormatter::TIME_ONLY) << endl;
     }
     Alarm.delay(0);
+    ws2812fx.service();
 }
 
 int 
@@ -106,6 +114,7 @@ int
 AlarmInterface::createAlarm(AlarmInterface::alarmSettings &currentAlarm) {
     int tmpId = 256;
     tmpId = addAlarm(currentAlarm);
+    Homie.getLogger() << "Creating Alarm Id: " << tmpId << endl;
     saveNewSettings();
     return tmpId;
 }
@@ -166,7 +175,7 @@ AlarmInterface::openFileSettings(const char* mode) {
             if (!jsonFile) {
                 Homie.getLogger() << F("  ✖ Failed to open JSONFILE for Reading")  << endl; 
             } else {
-               Homie.getLogger() << F("  ✔ JSONFILE opened...") << endl; 
+               Homie.getLogger() << F("  ✔ JSONFILE opened... Size: ") << jsonFile.size() << " bytes" << endl; 
                return true;
             }
         } else {
@@ -191,8 +200,7 @@ AlarmInterface::loadJSONSettings(void) {
             _settings[i].hour = json["Alarms"][i]["hour"];
             _settings[i].minute = json["Alarms"][i]["minute"];
             strlcpy(_settings[i].dayOfWeek, json["Alarms"][i]["dayOfWeek"], strlen( json["Alarms"][i]["dayOfWeek"])+1);
-            strlcpy(_settings[i].fxName, json["Alarms"][i]["fxName"], strlen(json["Alarms"][i]["fxName"])+1);
-            
+            strlcpy(_settings[i].fxName, json["Alarms"][i]["fxName"], strlen(json["Alarms"][i]["fxName"])+1);       
         }
         serializeJson(json, Serial); Homie.getLogger() << endl;
     } else 
@@ -201,15 +209,18 @@ AlarmInterface::loadJSONSettings(void) {
 
 void 
 AlarmInterface::saveJSONSettings(void) {
-     StaticJsonDocument <6144> json;
-     for(int i=0; i < dtNBR_ALARMS ;i++) {
-        json["Alarms"][i]["id"] = _settings[i].id;
-        json["Alarms"][i]["enable"] = _settings[i].enable ? "true" : "false";
-        json["Alarms"][i]["hour"] = _settings[i].hour;;
-        json["Alarms"][i]["minute"] = _settings[i].minute;
-        json["Alarms"][i]["dayOfWeek"] = _settings[i].dayOfWeek;
-        json["Alarms"][i]["fxName"] = _settings[i].fxName;
-    }
+    StaticJsonDocument <6144> json; 
+    JsonObject root = json.to<JsonObject>();
+    JsonArray alarms = root.createNestedArray("Alarms");
+    for (uint8_t i = 0; i < dtNBR_ALARMS; i++) {       
+        JsonObject alarm = alarms.createNestedObject();
+        alarm["id"] = _settings[i].id;
+        alarm["enable"] = _settings[i].enable ? "true" : "false";
+        alarm["hour"] = _settings[i].hour;
+        alarm["minute"] = _settings[i].minute;
+        alarm["dayOfWeek"] = _settings[i].dayOfWeek;
+        alarm["fxName"] = _settings[i].fxName;
+      }	
     serializeJson(json, jsonFile);
     serializeJson(json, Serial);   Homie.getLogger() << endl;
 }
