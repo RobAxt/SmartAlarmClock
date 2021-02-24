@@ -7,7 +7,7 @@ AlarmInterface::AlarmInterface() :  ws2812fx(LED_COUNT, LED_PIN, NEO_GRB + NEO_K
 }
 
 void
-AlarmInterface::setupInterface(void) { 
+AlarmInterface::setupInterface(int brightness, int speed, unsigned long color) { 
     
     DateTime.begin();
     Homie.getLogger() << "  ✔ TimeSync from " << DateTime.getServer() << endl;
@@ -15,9 +15,9 @@ AlarmInterface::setupInterface(void) {
     Homie.getLogger() << "  ✔ Time: " << DateTime.format(DateFormatter::TIME_ONLY) << endl;
     
     ws2812fx.init();
-    ws2812fx.setBrightness(100);
-    ws2812fx.setSpeed(1000);
-    //ws2812fx.setMode(FX_MODE_RAINBOW_CYCLE);
+    ws2812fx.setBrightness(brightness);
+    ws2812fx.setSpeed(speed);
+    ws2812fx.setColor(color);
     ws2812fx.start(); 
 }
 
@@ -155,6 +155,21 @@ AlarmInterface::findFX(const char* fxName) {
         if(_fxs[i].fxName == fxName) 
             return _fxs[i].fx;
     return _fxs[0].fx;
+}
+
+void
+AlarmInterface::setColor(unsigned long color) {
+    if(ws2812fx.getMode() != FX_MODE_STATIC)
+        ws2812fx.setMode(FX_MODE_STATIC);
+    if(color == 0)
+        ws2812fx.strip_off();
+    ws2812fx.setColor(color);
+}
+
+void 
+AlarmInterface::alarmFxMode(int mode) {
+     ws2812fx.setMode(mode);
+     Homie.getLogger() << "  ⏰  Alarm Ticked: " << ws2812fx.getModeName(mode) << "!!" << endl;
 }
 
 void 

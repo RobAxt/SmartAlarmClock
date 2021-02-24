@@ -3,6 +3,7 @@
 
 #include <Homie.hpp>
 #include <WS2812FX.h>
+#include <Ticker.h>
 #include "ESPDateTime.h"
 #include "ESP8266TimeAlarms.h"
 #include "ArduinoJson.h"
@@ -34,25 +35,23 @@ class AlarmInterface
                                { "system",  [this](){ Alarm.alarmRepeat(dowSaturday,6,0,0,[](){
                                                       Homie.getLogger() << "Adquiring new Time" << Serial.println(DateTime.toString()) << " from " << DateTime.getServer() << endl;
                                                       DateTime.begin();} );} },   
-                               { "rainbow", [this](){ ws2812fx.setMode(FX_MODE_RAINBOW_CYCLE);
-                                                      Homie.getLogger() << "  ⏰  Alarm Ticked: Rainbow!!" << endl;} },   
-                               { "blink", [this](){ ws2812fx.setMode(FX_MODE_BLINK_RAINBOW);
-                                                            Homie.getLogger() << "  ⏰  Alarm Ticked: Blink Rainbow!!" << endl;} },
-                               { "random", [this](){ ws2812fx.setMode(FX_MODE_RANDOM_COLOR);
-                                                           Homie.getLogger() << "  ⏰  Alarm Ticked: Random Color!!" << endl;} }
+                               { "rainbow", [this](){alarmFxMode(FX_MODE_RAINBOW_CYCLE);} },   
+                               { "blink",   [this](){alarmFxMode(FX_MODE_BLINK_RAINBOW);} },
+                               { "random",  [this](){alarmFxMode(FX_MODE_RANDOM_COLOR); } }
                              };
         int addAlarm(alarmSettings &currentAlarm);
+        void alarmFxMode(int mode);
+
 
     public:
         AlarmInterface();
-        void setupInterface(void);
+        void setupInterface(int brightness, int speed, unsigned long color);
         void loopInterface(void);
         int createAlarm(alarmSettings &currentAlarm);
-        
         int deleteAlarm(int id);
         void enableAlarm(int id);
         void disableAlarm(int id);
-
+        void setColor(unsigned long color);
     private:
         const char* JSONFILE = "/homie/state.json";
         bool openFileSettings(const char* mode);

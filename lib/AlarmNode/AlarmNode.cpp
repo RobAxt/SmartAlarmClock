@@ -1,14 +1,37 @@
 #include "AlarmNode.hpp"
 
 AlarmNode::AlarmNode(const char* id, const char* name, const char* type) : HomieNode(id,name,type) {
-     
+    _brightness = new HomieSetting<long>("brightness", "initial brightness");
+    _speed = new HomieSetting<long>("speed", "fx speed");
+    _color = new HomieSetting<long>("color", "initial color");
+
+    if(!_brightness->wasProvided())
+      _brightness->setDefaultValue(50);
+    if(!_speed->wasProvided())
+      _speed->setDefaultValue(500);
+    if(!_color->wasProvided())
+      _color->setDefaultValue(0xFF0000);
 }
 
 void 
 AlarmNode::setup() {
     Homie.getLogger() << F("Calling Node Setup...") << endl;
     setRunLoopDisconnected(true);
-    advertise("action").setName("Action")
+    advertise("rgb").setName("RGB Color")
+                    .setDatatype("unsigned integer")
+                    .setFormat("0x000000-0xFFFFFF")
+                    .settable([this](const HomieRange& range, const String& value) {
+                                setColor(strtoul(value.c_str(),NULL,16));
+                                return true;
+                    });
+    advertise("mode").setName("RGB FX Mode")
+                    .setDatatype("unsigned integer")
+                    .setFormat("0-54")
+                    .settable([this](const HomieRange& range, const String& value) {
+                               alarmFxMode(value.toInt());
+                               return true;
+                    });
+    advertise("command").setName("Command")
                    .setDatatype("string")
                    .setFormat("none,add,delete")
                    .settable([this](const HomieRange& range, const String& value) {
@@ -42,7 +65,6 @@ AlarmNode::setup() {
                               currentAlarm.hour = value.toInt();
                               sendProperties();
                               return true;
-
                              });
     advertise("minute").setName("Minute")
                    .setDatatype("integer")
@@ -80,7 +102,7 @@ AlarmNode::onReadyToOperate() {
     Homie.getLogger() << F("Calling Ready To Operate... ") << endl;
     Homie.getLogger() << F("  ◦ Node Name: ") << getName() << endl;
    
-    setupInterface();
+    setupInterface((int)_brightness->get(),(int)_speed->get(),(unsigned long)_color->get());
 
     getSetting(1);
     sendProperties();
@@ -89,12 +111,12 @@ AlarmNode::onReadyToOperate() {
 bool 
 AlarmNode::handleInput(const HomieRange& range, const String& property, const String& value) {
     Homie.getLogger() << F("Calling Node Handle Input...") << endl;
-    if(property != "action" && property != "id" && property != "enable" && property != "hour" && 
-       property != "minute" && property != "dayOfWeek" && property != "fx") {
+    if(property != "command" && property != "id" && property != "enable" && property != "hour" && 
+       property != "minute" && property != "dayOfWeek" && property != "fx" && property != "rgb" && property != "mode") {
         Homie.getLogger() << F("  ✖ Error: property not handle: ") << property << endl; 
         return true;
     }
-    if(property == "action" && value != "add" && value != "change" && value != "delete") {
+    if(property == "command" && value != "add" && value != "change" && value != "delete") {
         Homie.getLogger() << F("  ✖ Error: wrong value for command property: ") << value << endl; 
         return true;
     }
@@ -119,6 +141,10 @@ AlarmNode::handleInput(const HomieRange& range, const String& property, const St
         Homie.getLogger() << F("  ✖ Error: wrong value for dayOfWeek property: ") << value << endl; 
         return true;
     }
+    if(property == "mode" && (value.toInt() < 0 || value.toInt() > 54)) {
+        Homie.getLogger() << F("  ✖ Error: wrong value for mode property: ") << value << endl; 
+        return true;
+    }
     Homie.getLogger() << F("  ✔ Receive Property/Value: ") << property  << F(" ━► ") << value << endl;
     return false;
 }
@@ -137,7 +163,7 @@ AlarmNode::getSetting(int id) {
 
 void
 AlarmNode::sendProperties() {
-    setProperty("action").overwriteSetter(false).send("none");
+    setProperty("command").overwriteSetter(false).send("none");
     setProperty("id").overwriteSetter(false).send(String(currentAlarm.id).c_str());
     setProperty("enable").overwriteSetter(false).send(currentAlarm.enable?"true":"false");
     setProperty("hour").overwriteSetter(false).send(String(currentAlarm.hour).c_str());

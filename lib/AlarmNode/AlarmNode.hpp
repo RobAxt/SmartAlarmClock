@@ -17,6 +17,9 @@ class AlarmNode : public HomieNode, AlarmInterface {
         virtual bool handleInput(const HomieRange& range, const String& property, const String& value);
 
     private:
+        HomieSetting<long> *_brightness;
+        HomieSetting<long> *_speed;
+        HomieSetting<long> *_color; 
         alarmSettings currentAlarm;  
         void getSetting(int id);     
         void sendProperties(void);
